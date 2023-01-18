@@ -1,6 +1,8 @@
 //Lambda Parameters
-var identityId = 'yak'
-var scannerThingName = 'scannerThing9'
+// identity for devtest1 cognito user
+var identityId = 'f65a1daf-c1ec-4aff-9157-c3928cb46dca'
+var identityIdFull = 'us-east-1:f65a1daf-c1ec-4aff-9157-c3928cb46dca'
+var scannerThingName = 'BS12K00000'
 
 //Import libraries
 var AWS = require("aws-sdk");
@@ -86,9 +88,9 @@ async function add_scanner () {
 
   var scannerThingResources = '';
   for (let scannerThing in scannerThingList.slice(0,-1)) {
-    scannerThingResources = scannerThingResources + `"arn:aws:iot:us-east-1:089627766064:topic/${scannerThingList[scannerThing]}",\n`
+    scannerThingResources = scannerThingResources + `"arn:aws:iot:us-east-1:089627766064:topicfilter/dt/bt_scan_log_v1/${scannerThingList[scannerThing]}",\n`
   }
-  scannerThingResources = scannerThingResources + `"arn:aws:iot:us-east-1:089627766064:topic/${scannerThingList[scannerThingList.length-1]}"`
+  scannerThingResources = scannerThingResources + `"arn:aws:iot:us-east-1:089627766064:topicfilter/dt/bt_scan_log_v1/${scannerThingList[scannerThingList.length-1]}"`
   var policyTemplate = `{
     "Version": "2012-10-17",
     "Statement": [
@@ -96,7 +98,7 @@ async function add_scanner () {
             "Effect": "Allow",
             "Action": "iot:Connect",
             "Resource": [
-                "arn:aws:iot:us-east-1:089627766064:client/${identityId}"
+                "arn:aws:iot:us-east-1:089627766064:client/\${iot:ClientId}"
             ]
         },
         {
@@ -129,6 +131,12 @@ async function add_scanner () {
 
   }
 
+  var paramsAttachPolicy = {
+    policyName: identityId,
+    target: identityIdFull
+  };
+  attachPolicyResponse = await iot.attachPolicy(paramsAttachPolicy).promise();
+  console.log("Attach Policy Response: " + attachPolicyResponse);
 }
 
 add_scanner();
