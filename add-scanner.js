@@ -86,11 +86,16 @@ async function add_scanner () {
     }
   }
 
-  var scannerThingResources = '';
+  var scannerThingSubscribe = '';
   for (let scannerThing in scannerThingList.slice(0,-1)) {
-    scannerThingResources = scannerThingResources + `"arn:aws:iot:us-east-1:089627766064:topicfilter/dt/bt_scan_log_v1/${scannerThingList[scannerThing]}",\n`
+    scannerThingSubscribe = scannerThingSubscribe + `"arn:aws:iot:us-east-1:089627766064:topicfilter/dt/bt_scan_log_v1/${scannerThingList[scannerThing]}",\n`
   }
-  scannerThingResources = scannerThingResources + `"arn:aws:iot:us-east-1:089627766064:topicfilter/dt/bt_scan_log_v1/${scannerThingList[scannerThingList.length-1]}"`
+  scannerThingSubscribe = scannerThingSubscribe + `"arn:aws:iot:us-east-1:089627766064:topicfilter/dt/bt_scan_log_v1/${scannerThingList[scannerThingList.length-1]}"`
+  var scannerThingReceive = '';
+  for (let scannerThing in scannerThingList.slice(0,-1)) {
+    scannerThingReceive = scannerThingReceive + `"arn:aws:iot:us-east-1:089627766064:topic/dt/bt_scan_log_v1/${scannerThingList[scannerThing]}",\n`
+  }
+  scannerThingReceive = scannerThingReceive + `"arn:aws:iot:us-east-1:089627766064:topic/dt/bt_scan_log_v1/${scannerThingList[scannerThingList.length-1]}"`
   var policyTemplate = `{
     "Version": "2012-10-17",
     "Statement": [
@@ -105,8 +110,15 @@ async function add_scanner () {
             "Effect": "Allow",
             "Action": "iot:Subscribe",
             "Resource": [
-                ${scannerThingResources}
+                ${scannerThingSubscribe}
             ]
+        },
+        {
+          "Effect": "Allow",
+          "Action": "iot:Receive",
+          "Resource": [
+              ${scannerThingReceive}
+          ]
         }
     ]
   }`
