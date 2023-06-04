@@ -1,29 +1,14 @@
-//Lambda Parameters
-// identity for devtest1 cognito user
-var identityId = 'f65a1daf-c1ec-4aff-9157-c3928cb46dca'
-var identityIdFull = 'us-east-1:f65a1daf-c1ec-4aff-9157-c3928cb46dca'
-var scannerThingName = 'BS12K00000'
-
 //Import libraries
 var AWS = require("aws-sdk");
-var options = {
-  region: 'us-east-1'
-}
-var iot = new AWS.Iot(options);
-var dynamodb = new AWS.DynamoDB(options);
 
-//Login to AWS (not needed by Lambda)
-/*
-AWS.config.getCredentials(function(err) {
-  if (err) console.log(err.stack);
-  // credentials not loaded
-  else {
-    console.log("Access key:", AWS.config.credentials.accessKeyId);
+async function add_scanner (identityIdFull, scannerThingName) {
+  var identityId = identityIdFull.split(':')[1]
+  console.log("IdentitiyId: " + identityId);
+  var options = {
+    region: 'us-east-1'
   }
-});
-*/
-
-async function add_scanner () {
+  var iot = new AWS.Iot(options);
+  var dynamodb = new AWS.DynamoDB(options);
   //Check if user settings exists
   var params = {
     Key: {
@@ -151,4 +136,11 @@ async function add_scanner () {
   console.log("Attach Policy Response: " + attachPolicyResponse);
 }
 
-add_scanner();
+module.exports = { add_scanner };
+
+//Lambda Parameters
+// identity for devtest1 cognito user
+//var identityId = 'f65a1daf-c1ec-4aff-9157-c3928cb46dca'
+//var identityIdFull = 'us-east-1:f65a1daf-c1ec-4aff-9157-c3928cb46dca'
+//var scannerThingName = 'BS12K00000'
+//add_scanner(identityIdFull, scannerThingName);
